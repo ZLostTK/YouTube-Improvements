@@ -22,10 +22,15 @@
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
-      "js": ["content/main-world/main.js"],
-      "world": "MAIN",
+      "js": ["content/main-world/loader.js"],
       "run_at": "document_start",
       "all_frames": false
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["content/main-world/*"],
+      "matches": ["*://*.youtube.com/*"]
     }
   ]
 }
