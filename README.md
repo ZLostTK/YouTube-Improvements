@@ -96,9 +96,10 @@ YouTube-Improvements/
 │   ├── popup.html                       # Extension popup UI
 │   ├── popup.css                        # Popup styles (dark theme, toggle switches)
 │   └── popup.js                         # Popup logic: reads/writes localStorage on YouTube tab
-└── content/
+    └── content/
     └── main-world/
-        ├── main.js                      # Entry point -- orchestrates module loading
+        ├── loader.js                    # ISOLATED world injector: adds <script type="module"> for main.js
+        ├── main.js                      # Entry point (MAIN world via module injection) -- orchestrates module loading
         ├── modules/
         │   ├── storage.js               # localStorage wrapper (ytie: prefix)
         │   ├── dom-utils.js             # addStyle helper
@@ -121,7 +122,7 @@ YouTube-Improvements/
 
 ### Key technical details
 
-- **World**: The content script runs in the `MAIN` world at `document_start`, giving it direct access to the page's JavaScript context without needing `unsafeWindow`.
+- **World injection**: `loader.js` runs in the ISOLATED world and injects a `<script type="module" src="chrome-extension://.../main.js">` tag into the page DOM. This causes `main.js` and all its imports to execute in the page's MAIN world context as ES modules. Chrome automatically adds the extension origin to the page's CSP, so loading extension resources via `chrome.runtime.getURL()` works without interference.
 - **State**: Synchronous `localStorage` (no messaging API needed between popup and content script).
 - **Dependencies**: Zero. No build tooling, no npm, no bundler. Vanilla JavaScript throughout.
 - **Tabview engine** (`tabview/engine.js`, ~3500 lines) is a self-contained module adapted from [Tabview-YouTube](https://github.com/tabview-youtube/Tabview-Youtube) (MIT license).
