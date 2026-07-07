@@ -142,11 +142,11 @@ import { commonUtil } from './common-util.js';
       let isHovering = false;
       button.addEventListener("mouseenter", () => {
         speedOptions.style.display = "block";
-        var containerRect = player.getBoundingClientRect();
-        var buttonRect = button.getBoundingClientRect();
-        var speedOptionsRect = speedOptions.getBoundingClientRect();
-        var left = buttonRect.left - containerRect.left - speedOptionsRect.width / 2 + buttonRect.width / 2;
-        var top = buttonRect.top - containerRect.top - speedOptions.clientHeight;
+        const containerRect = player.getBoundingClientRect();
+        const buttonRect = button.getBoundingClientRect();
+        const speedOptionsRect = speedOptions.getBoundingClientRect();
+        const left = buttonRect.left - containerRect.left - speedOptionsRect.width / 2 + buttonRect.width / 2;
+        const top = buttonRect.top - containerRect.top - speedOptions.clientHeight;
         speedOptions.style.left = `${left}px`;
         speedOptions.style.top = `${top}px`;
       });
@@ -170,18 +170,19 @@ import { commonUtil } from './common-util.js';
       StorageUtil.setValue(StorageUtil.keys.youtube.videoPlaySpeed, speedValue);
     },
     speedDisplayText: function(speedText) {
-      let elementId = "youtube-extension-text-box";
+      const elementId = "youtube-extension-text-box";
       let element = document.getElementById(elementId);
       if (!element) {
-        let mediaElement = document.getElementById("movie_player");
-        mediaElement.insertAdjacentHTML("afterbegin", `<div id="${elementId}">${speedText}</div>`);
-        element = document.getElementById(elementId);
+        const mediaElement = document.getElementById("movie_player");
+        element = document.createElement("div");
+        element.id = elementId;
+        element.textContent = speedText;
+        mediaElement.insertBefore(element, mediaElement.firstChild);
       } else {
         element.textContent = speedText;
       }
       element.style.display = "block";
       element.style.opacity = 0.8;
-      element.style.filter = `alpha(opacity=${0.8 * 100})`;
       this.startFadeoutAnimation(element);
     },
     startFadeoutAnimation: function(element, startOpacity = 0.9, duration = 1500) {
@@ -195,7 +196,6 @@ import { commonUtil } from './common-util.js';
         const progress = Math.min(elapsed / duration, 1);
         opacity = startOpacity * (1 - progress);
         element.style.opacity = opacity;
-        element.style.filter = `alpha(opacity=${opacity * 100})`;
         if (progress < 1) {
           this.activeAnimationId = requestAnimationFrame(fadeStep);
         } else {

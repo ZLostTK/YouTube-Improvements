@@ -8,7 +8,9 @@ import { LangueUtil } from './language.js';
 import { Theme } from './theme.js';
 import { Screenshot } from './screenshot.js';
 import { Dialog } from './dialog.js';
-import { ComstomConfirm } from './custom-confirm.js';
+import { CustomConfirm } from './custom-confirm.js';
+
+const _hasOwn = Object.prototype.hasOwnProperty;
 
   export const ToolBox = {
     getFunctionState: function() {
@@ -189,7 +191,7 @@ import { ComstomConfirm } from './custom-confirm.js';
       ];
       paths.forEach((attrs) => {
         const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        if (!attrs.hasOwnProperty("fill")) {
+        if (!_hasOwn.call(attrs, "fill")) {
           path.setAttribute("fill", "#000000");
         }
         Object.entries(attrs).forEach(([key, value]) => path.setAttribute(key, value));
@@ -243,7 +245,7 @@ import { ComstomConfirm } from './custom-confirm.js';
       if (downloadingConfirm) {
         downloadOperat();
       } else {
-        ComstomConfirm.show({
+        CustomConfirm.show({
           "message": language.content.download_confirm_message,
           "enter": language.content.download_enter_text,
           "cancel": language.content.download_cancel_text,
@@ -296,7 +298,7 @@ import { ComstomConfirm } from './custom-confirm.js';
           videoLoopInterval = null;
         }
         const videoFull = document.querySelector("#movie_player > div.html5-video-container > video");
-        if (videoFull != void 0) {
+        if (videoFull != null) {
           videoLoopInterval = setInterval(() => {
             if (videoLoopSate) {
               document.querySelector("#movie_player > div.html5-video-container > video").setAttribute("loop", "true");
@@ -371,16 +373,16 @@ import { ComstomConfirm } from './custom-confirm.js';
         const element = document.createElement(item.tagName);
         element.className = item.classname;
         element.setAttribute("title", item.title);
-        if (item.hasOwnProperty("icon")) {
+        if (_hasOwn.call(item, "icon")) {
           element.appendChild(item.icon);
         }
-        if (item.hasOwnProperty("id")) {
+        if (_hasOwn.call(item, "id")) {
           element.id = item.id;
         }
-        if (item.hasOwnProperty("onclick")) {
+        if (_hasOwn.call(item, "onclick")) {
           element.onclick = item.onclick;
         }
-        if (item.hasOwnProperty("style")) {
+        if (_hasOwn.call(item, "style")) {
           element.setAttribute("style", item.style);
         }
         parent.appendChild(element);
@@ -398,11 +400,11 @@ import { ComstomConfirm } from './custom-confirm.js';
       let isHovering = false;
       button.addEventListener("mouseenter", () => {
         toolBoxContainer.style.display = "block";
-        var containerRect = player.getBoundingClientRect();
-        var buttonRect = button.getBoundingClientRect();
-        var toolBoxContainerRect = toolBoxContainer.getBoundingClientRect();
-        var left = buttonRect.left - containerRect.left - toolBoxContainerRect.width / 2 + buttonRect.width / 2;
-        var top = buttonRect.top - containerRect.top - toolBoxContainer.clientHeight;
+        const containerRect = player.getBoundingClientRect();
+        const buttonRect = button.getBoundingClientRect();
+        const toolBoxContainerRect = toolBoxContainer.getBoundingClientRect();
+        const left = buttonRect.left - containerRect.left - toolBoxContainerRect.width / 2 + buttonRect.width / 2;
+        const top = buttonRect.top - containerRect.top - toolBoxContainer.clientHeight;
         toolBoxContainer.style.left = `${left}px`;
         toolBoxContainer.style.top = `${top}px`;
       });
@@ -517,25 +519,21 @@ import { ComstomConfirm } from './custom-confirm.js';
 			    transition: background 0.3s;
 				margin-bottom: 10px;
 			}
-			
 			.setting {
 			    display: flex;
 			    justify-content: space-between;
 			    align-items: center;
 			}
-			
 			.setting .setting-name{
 			    flex: 1;
 			    text-align: left;
 			    font-size: 14px;
 			}
-			
 			.setting .setting-switch{
 			    width: 60px;
 			    display: flex;
 			    justify-content: end;
 			}
-			
 			label {
 			    font-size: 16px;
 			    font-weight: bold;
@@ -572,82 +570,46 @@ import { ComstomConfirm } from './custom-confirm.js';
 			    display: none;
 			}
 		`;
-      const content = `
-			<div class="row-item setting">
-			  <div class="setting-name" data-i18n="function_is_comment_table_open"></div>
-			  <div class="setting-switch">
-				<input type="checkbox" id="isCommentTableOpen" /><label class="toggle" for="isCommentTableOpen"></label>
-			  </div>
-			</div>
-	
-			<div class="row-item setting">
-			  <div class="setting-name" data-i18n="function_is_theme_progress_bar_open"></div>
-			  <div class="setting-switch">
-				<input type="checkbox" id="isThemeProgressBarOpen" /><label class="toggle" for="isThemeProgressBarOpen"></label>
-			  </div>
-			</div>
-		
-			<div class="row-item setting">
-			  <div class="setting-name" data-i18n="function_is_speed_control_open"></div>
-			  <div class="setting-switch">
-				<input type="checkbox" id="isSpeedControlOpen" /><label class="toggle"for="isSpeedControlOpen"></label>
-			  </div>
-			</div>
-	
-			<div class="row-item setting">
-			  <div class="setting-name" data-i18n="function_is_mark_or_remove_ad_open"></div>
-			  <div class="setting-switch">
-				<input type="checkbox" id="isMarkOrRemoveAdOpen" /><label class="toggle"for="isMarkOrRemoveAdOpen"></label>
-			  </div>
-			</div>
-			
-			<div class="row-item setting">
-			  <div class="setting-name" data-i18n="function_is_youtube_downloading_open"></div>
-			  <div class="setting-switch">
-				<input type="checkbox" id="isYoutubedownloadingOpen" /><label class="toggle"for="isYoutubedownloadingOpen"></label>
-			  </div>
-			</div>
-		`;
+      // build settings form as DOM nodes (no innerHTML XSS)
+      const contentRoot = document.createDocumentFragment();
+      const settings = [
+        { id: "isCommentTableOpen", i18n: "function_is_comment_table_open", key: "isOpenCommentTable" },
+        { id: "isThemeProgressBarOpen", i18n: "function_is_theme_progress_bar_open", key: "isOpenThemeProgressBar" },
+        { id: "isSpeedControlOpen", i18n: "function_is_speed_control_open", key: "isOpenSpeedControl" },
+        { id: "isMarkOrRemoveAdOpen", i18n: "function_is_mark_or_remove_ad_open", key: "isOpenMarkOrRemoveAd" },
+        { id: "isYoutubedownloadingOpen", i18n: "function_is_youtube_downloading_open", key: "isOpenYoutubedownloading" }
+      ];
+      settings.forEach(({ id, i18n, key }) => {
+        const row = document.createElement("div");
+        row.className = "row-item setting";
+        const name = document.createElement("div");
+        name.className = "setting-name";
+        name.setAttribute("data-i18n", i18n);
+        name.textContent = language.content[i18n];
+        const sw = document.createElement("div");
+        sw.className = "setting-switch";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.id = id;
+        input.checked = functionState[key];
+        const label = document.createElement("label");
+        label.className = "toggle";
+        label.setAttribute("for", id);
+        sw.appendChild(input);
+        sw.appendChild(label);
+        row.appendChild(name);
+        row.appendChild(sw);
+        contentRoot.appendChild(row);
+        input.addEventListener("change", (e) => {
+          functionState[key] = e.target.checked;
+          StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
+        });
+      });
       Dialog.showMake({
         title: language.content.function_setting_title,
-        content,
+        contentNode: contentRoot,
         styleSheet,
         direction: language.direction,
-        onContentReady: function($that) {
-          const commentTable = $that.dialogContent.querySelector("#isCommentTableOpen");
-          const themeProgressBar = $that.dialogContent.querySelector("#isThemeProgressBarOpen");
-          const speedControl = $that.dialogContent.querySelector("#isSpeedControlOpen");
-          const markOrRemoveAd = $that.dialogContent.querySelector("#isMarkOrRemoveAdOpen");
-          const youtubedownloading = $that.dialogContent.querySelector("#isYoutubedownloadingOpen");
-          $that.dialogContent.querySelectorAll(".setting-name").forEach((element) => {
-            element.textContent = language.content[element.getAttribute("data-i18n")];
-          });
-          commentTable.checked = functionState.isOpenCommentTable;
-          themeProgressBar.checked = functionState.isOpenThemeProgressBar;
-          speedControl.checked = functionState.isOpenSpeedControl;
-          markOrRemoveAd.checked = functionState.isOpenMarkOrRemoveAd;
-          youtubedownloading.checked = functionState.isOpenYoutubedownloading;
-          commentTable.addEventListener("change", (e) => {
-            functionState.isOpenCommentTable = e.target.checked;
-            StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
-          });
-          themeProgressBar.addEventListener("change", (e) => {
-            functionState.isOpenThemeProgressBar = e.target.checked;
-            StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
-          });
-          speedControl.addEventListener("change", (e) => {
-            functionState.isOpenSpeedControl = e.target.checked;
-            StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
-          });
-          markOrRemoveAd.addEventListener("change", (e) => {
-            functionState.isOpenMarkOrRemoveAd = e.target.checked;
-            StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
-          });
-          youtubedownloading.addEventListener("change", (e) => {
-            functionState.isOpenYoutubedownloading = e.target.checked;
-            StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
-          });
-        },
         onClose: function() {
           location.reload();
         }

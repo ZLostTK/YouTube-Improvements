@@ -10,7 +10,7 @@ export const StorageUtil = {
     youtube: {
       videoPlaySpeed: "yt/videoPlaySpeed",
       functionState: "yt/functionState_01",
-      videoLoop: "py/videoLoop",
+      videoLoop: "yt/videoLoop",
       theme: "yt/theme",
       downloadingConfirm: "yt/downloadingConfirm"
     }

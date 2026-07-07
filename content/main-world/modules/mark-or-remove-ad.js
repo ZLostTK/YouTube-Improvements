@@ -3,14 +3,15 @@
  * de YouTube (no bloquea publicidad, solo la marca/oculta via CSS).
  */
 import { commonUtil } from './common-util.js';
+import { addStyle } from './dom-utils.js';
 
   export const MarkOrRemoveAd = {
     generateRemoveAdElementId: "removeADHTMLElement_" + Math.ceil(Math.random() * 1e8),
     markADHTMLElement: function() {
-      if (document.querySelector(this.generateRemoveAdElementId)) {
+      if (document.querySelector("#" + this.generateRemoveAdElementId)) {
         return;
       }
-      let cssMarkSelectorArr = [
+      const cssMarkSelectorArr = [
         `#masthead-ad`,
         `ytd-rich-item-renderer.style-scope.ytd-rich-grid-row #content:has(.ytd-display-ad-renderer)`,
         `.video-ads.ytp-ad-module`,
@@ -24,14 +25,11 @@ import { commonUtil } from './common-util.js';
         `ad-slot-renderer`,
         `ytm-companion-ad-renderer`
       ];
-      cssMarkSelectorArr.forEach((selector, index) => {
-        cssMarkSelectorArr[index] = `${selector} *{text-decoration:line-through!important;text-decoration-thickness:2px!important;}`;
-      });
-      const cssText = cssMarkSelectorArr.join(" ");
-      const style = document.createElement(`style`);
+      const cssText = cssMarkSelectorArr.map(
+        s => `${s} *{text-decoration:line-through!important;text-decoration-thickness:2px!important;}`
+      ).join(" ");
+      const style = addStyle(cssText);
       style.id = this.generateRemoveAdElementId;
-      (document.head || document.body).appendChild(style);
-      style.appendChild(document.createTextNode(cssText));
     },
     run: function() {
       if (!/youtube\.com/.test(window.location.host)) {
