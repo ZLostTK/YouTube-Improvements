@@ -5,11 +5,10 @@ import { addStyle } from './dom-utils.js';
 
 export const commonUtil = {
   onPageLoad: function(callback) {
-    if (document.readyState === "complete") {
+    if (document.readyState !== "loading") {
       callback();
     } else {
-      window.addEventListener("DOMContentLoaded", callback, { once: true });
-      window.addEventListener("load", callback, { once: true });
+      document.addEventListener("DOMContentLoaded", callback, { once: true });
     }
   },
   addStyle: function(style) {
