@@ -8,7 +8,7 @@ import { LangueUtil } from './language.js';
 import { Theme } from './theme.js';
 import { Screenshot } from './screenshot.js';
 import { Dialog } from './dialog.js';
-import { ComstomConfirm } from './custom-confirm.js';
+import { CustomConfirm } from './custom-confirm.js';
 
   export const ToolBox = {
     getFunctionState: function() {
@@ -243,7 +243,7 @@ import { ComstomConfirm } from './custom-confirm.js';
       if (downloadingConfirm) {
         downloadOperat();
       } else {
-        ComstomConfirm.show({
+        CustomConfirm.show({
           "message": language.content.download_confirm_message,
           "enter": language.content.download_enter_text,
           "cancel": language.content.download_cancel_text,

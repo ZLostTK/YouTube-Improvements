@@ -1,8 +1,10 @@
 /*!
- * ComstomConfirm - dialogo de confirmacion reutilizable basado en Dialog.
+ * CustomConfirm - dialogo de confirmacion reutilizable basado en Dialog.
  */
 
-  export const ComstomConfirm = {
+// ponytail: this duplicates Dialog.js; consolidate if Dialog
+// gains confirm-specific helpers (enter/cancel buttons built-in).
+  export const CustomConfirm = {
     show: function(options) {
       const overlay = document.createElement("div");
       overlay.style.position = "fixed";
