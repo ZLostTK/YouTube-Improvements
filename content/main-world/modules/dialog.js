@@ -118,9 +118,12 @@ export const Dialog = new (class {
       overflow: "auto"
     });
     // ponytail: textContent instead of innerHTML to avoid XSS.
-    // If callers need HTML content, they should pre-render to a DOM node
-    // and pass it as param.contentNode instead.
-    this.dialogContent.textContent = param.content || "";
+    // pre-rendered DOM nodes via param.contentNode preferred over HTML strings.
+    if (hasOwn.call(param, "contentNode") && param.contentNode) {
+      this.dialogContent.appendChild(param.contentNode);
+    } else {
+      this.dialogContent.textContent = param.content || "";
+    }
     this.content.appendChild(this.dialogContent);
     if (param.onContentReady) {
       param.onContentReady(this);
