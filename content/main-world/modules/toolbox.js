@@ -579,7 +579,7 @@ const _hasOwn = Object.prototype.hasOwnProperty;
         { id: "isMarkOrRemoveAdOpen", i18n: "function_is_mark_or_remove_ad_open", key: "isOpenMarkOrRemoveAd" },
         { id: "isYoutubedownloadingOpen", i18n: "function_is_youtube_downloading_open", key: "isOpenYoutubedownloading" }
       ];
-      settings.forEach(({ id, i18n }) => {
+      settings.forEach(({ id, i18n, key }) => {
         const row = document.createElement("div");
         row.className = "row-item setting";
         const name = document.createElement("div");
@@ -591,9 +591,7 @@ const _hasOwn = Object.prototype.hasOwnProperty;
         const input = document.createElement("input");
         input.type = "checkbox";
         input.id = id;
-        // isCommentTableOpen → isOpenCommentTable
-        const stateKey = "isOpen" + id.slice(2);
-        input.checked = functionState[stateKey];
+        input.checked = functionState[key];
         const label = document.createElement("label");
         label.className = "toggle";
         label.setAttribute("for", id);
@@ -603,7 +601,7 @@ const _hasOwn = Object.prototype.hasOwnProperty;
         row.appendChild(sw);
         contentRoot.appendChild(row);
         input.addEventListener("change", (e) => {
-          functionState[stateKey] = e.target.checked;
+          functionState[key] = e.target.checked;
           StorageUtil.setValue(StorageUtil.keys.youtube.functionState, functionState);
         });
       });
